@@ -1,88 +1,59 @@
 ///<reference types="Cypress"/>
 
-const token="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";
-const baseURL="https://api.github.com";
-const owner="Kaushik368";
-
-
-var name="Cypress_API_testing1";
-var description="This is your1 first repo!";
-var updated="Cypress_API_testing_updated";
-var shs;
 var id;
-describe('Github_api_testing', () => {
-    it('1 CREATE A REPOSITORY FOR A AUTHENTICATED USER', () => {
+describe('Testing trello Api', () => {
+ 
+    it('creating the board', () => {
         cy.request({
             method:"POST",
-            url:`${baseURL}/user/repos`,
+            url:"https://api.trello.com/1/boards/?name=Kaushik&key=0ffdccea3ed9032e6579c39d75a60cb6&token=ATTAbfd62fdf54e50daec851326a7b77e05a66322a7e39e883a14d02016116e6a5338011FF57",
             headers:{
-                Authorization: `Bearer ${token}`,
                 accept:"application/json"
             },
-            body:{
-                "name":name,
-                "description":description,
-             }
             
         }).then((response)=>{
+            // let body =JSON.parse(JSON.stringify(response.body))
         
-            expect(response.status).to.eql(201);
-            cy.log(JSON.stringify(response.body.name))    
+            expect(response.status).to.eql(200);
+                // cy.log(JSON.stringify(response.body.id))
+             id=response.body.id;
         })
     });
 
-    it('2 UPDATE A REPOSITORY', () => {
+    it('updating the board', () => {
+        const newName="Sunil"
+        const descrip="I am learning Trello API"
         cy.request({
-            method:"PATCH",
-            url:`${baseURL}/repos/${owner}/${name}`,
+            method:"PUT",
+            url:`https://api.trello.com/1/boards/${id}?key=0ffdccea3ed9032e6579c39d75a60cb6&token=ATTAbfd62fdf54e50daec851326a7b77e05a66322a7e39e883a14d02016116e6a5338011FF57`,
             headers:{
-                Authorization: `Bearer ${token}`,
                 accept:"application/json"
             },
             body:{
-                "name":updated,
+                name:newName,
+                desc:descrip,
+            }
+            
+        }).then((response)=>{
+            // let body =JSON.parse(JSON.stringify(response.body))
+        
+            expect(response.status).to.eql(200);
+            expect(response.body.name).to.eql(newName)
+            expect(response.body.desc).to.eql(descrip)
                 
-             }
-            
-        }).then((response)=>{
-        
-            expect(response.status).to.eql(200);
-            cy.log(JSON.stringify(response.body.name))   
+                
         })
     });
 
-    it('4 GET A REPOSITORY', () => {
-        cy.request({
-            method:"GET",
-            url:`${baseURL}/repos/${owner}/${updated}`,
-            headers:{
-                Authorization: `Bearer ${token}`,
-                accept:"application/json"
-            },
-            
-            
-        }).then((response)=>{
-        
-            expect(response.status).to.eql(200);
-            cy.log(JSON.stringify(response))  
-        })
-    });
-
-    it('3 DELETE A REPOSITORY', () => {
+    it('DELETE a board', () => {
         cy.request({
             method:"DELETE",
-            url:`${baseURL}/repos/${owner}/${updated}`,
-            headers:{
-                Authorization: `Bearer ${token}`,
-                accept:"application/json"
-            },
+            url:`https://api.trello.com/1/boards/${id}?key=0ffdccea3ed9032e6579c39d75a60cb6&token=ATTAbfd62fdf54e50daec851326a7b77e05a66322a7e39e883a14d02016116e6a5338011FF57`,
             
             
         }).then((response)=>{
-        
-            expect(response.status).to.eql(204);
-            cy.log(JSON.stringify(response.body.name))  
+           
+            expect(response.status).to.eql(200);
         })
     });
-
 });
